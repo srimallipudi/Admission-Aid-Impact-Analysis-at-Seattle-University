@@ -49,7 +49,6 @@ dfi['Race'] = dfi['Race'].str.replace('\W', '', regex=True)
 # Split the Application term and year
 dfi[['Application Term','Application Year']] = dfi['Application Start Term'].str.split(' ', expand=True)
 
-
 #college  - remove Non_matriculated  
 print(dfi['College'].isnull().sum())
 dfi['College'].value_counts()
@@ -71,11 +70,9 @@ dfi['Scholarship'] = dfi['Scholarship'].astype('int64')
 dfi.groupby(['College'])['Scholarship'].sum()
 dfi.groupby(['College'])['Scholarship'].count()
 
-
 dfi = dfi.drop(dfi[(dfi['College'] == 'Non-Matriculated') ].index)
 dfi = dfi.drop(dfi[(dfi['College'] == 'School of Theology and Ministry') ].index)
 dfi = dfi.drop(dfi[(dfi['College'] == 'College of Nursing') ].index)
-
 
 dfi[dfi['Scholarship'] != 0].groupby(['College', 'Application Program'])['Scholarship'].count().to_excel('scholar.xlsx')
 
@@ -83,7 +80,6 @@ dfi[dfi['Scholarship'] != 0].groupby(['College', 'Application Program'])['Schola
 print(dfi['Application Program'].isnull().sum())
 dfi['Application Program'].value_counts()
 dfi['Application Program'].value_counts().to_excel('Program.xlsx')
-
 
 #Reformat the Dates to Month and Year Format
 dfi['Application_Submission_Month_Year'] = pd.to_datetime(dfi['Applications Submitted Date']).dt.strftime('%Y-%m')
@@ -93,7 +89,6 @@ dfi['Decision_Month_Year'] = pd.to_datetime(dfi['Decision Released Date']).dt.st
 dfi["Decision_time"] = ((dfi['Decision Released Date']  - dfi['Applications Submitted Date'])/np.timedelta64(1, 'M'))
 dfi['Decision_time'] = dfi['Decision_time'].astype(int)
 # dfi[['Term', 'Year']] = dfi['Application Start Term'].str.split(' ', expand=True)
-
 
 dfi['Application Year'] = dfi['Application Year'].astype('int64')
 # dfi = dfi.drop(dfi[(dfi['Application Year'] == 2024) ].index)
@@ -109,14 +104,8 @@ dfi.drop(['Application Start Term', 'Decision Released Date', 'Applications Subm
 #move y to the end
 dfi.insert(len(dfi.columns)-1, 'Registered in Colleague', dfi.pop('Registered in Colleague'))
 
-dfi.to_excel('internalaid.xlsx')
-
 # Convert the nominal data in df to binary data.
 dfi2 = pd.get_dummies(dfi, columns=['Citizenship Status','College', 'Application Program', 'Sex', 'Race', 'Application Term', 'Application Year', 'Tier'])
 dfi2.info()
 dfi2.head()
-
 dfi2.to_excel('Unfundedaid.xlsx')
-
-# # to remove redundancy among dummy variables (multicollinearity), removing one of them
-# dfi = pd.get_dummies(dfi, columns=['Citizenship Status','College', 'Application Program', 'Sex', 'Race', 'Application Term', 'Application Year', 'Tier'], drop_first=True)
